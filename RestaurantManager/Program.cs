@@ -46,6 +46,15 @@ static class Program
     {
         DateTime date = InputManager.GetDate("Enter the date:");
         int amountOfPeople = InputManager.GetInt("Enter the amount of people:", i => i > 0);
+
+        List<DateTime> availableTimes = ReservationManager.GetAvailableTimes(date, amountOfPeople);
+
+        int selectedTimeIndex = InputManager.GetSelection(
+            availableTimes.Select(t => $"{t.Hour}:{t.Minute}").ToList());
+        
+        DateTime time = availableTimes[selectedTimeIndex];
+        
+        Console.WriteLine($"Date: {date}; GroupSize: {amountOfPeople}; Time: {time}");
     }
 
     private static void Order()

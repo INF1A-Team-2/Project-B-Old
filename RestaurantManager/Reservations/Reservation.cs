@@ -31,18 +31,20 @@ class Reservation
     private static Reservation Parse(List<object> data)
     {
         return new Reservation(
-            (int)(long)data[0],
-            DateTime.Parse((string)data[1], null, DateTimeStyles.AdjustToUniversal),
+               (int)(long)data[0],
+                  DateTime.Parse((string)data[1], null, DateTimeStyles.AdjustToUniversal),
             (int)(long)data[2],
-            (MenuType)(int)(long)data[3],
+                  (MenuType)(int)(long)data[3],
             (int)(long)data[4],
             (int)(long)data[5],
-            (string)data[6]);
+                  (string)data[6]);
     }
 
     public static List<Reservation> GetAllReservations()
     {
-        return Program.Database.Execute("SELECT * FROM reservations").Select(r => Parse(r)).ToList();
+        return Program.Database.Execute("SELECT * FROM reservations")
+            .Select(Parse)
+            .ToList();
     }
 
     public static Reservation? GetReservationByID(int id)
