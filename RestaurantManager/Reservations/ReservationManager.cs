@@ -27,7 +27,7 @@ static class ReservationManager
     
     private static string GenerateCode()
     {
-        List<string> existingCodes = Program.Database.Execute(
+        List<string> existingCodes = DatabaseConnection.Execute(
                 """SELECT code FROM reservations WHERE CAST(datetime as DATE) = CAST(CURDATE() as DATE)""")
             .Select(r => (string)r[0]).ToList();
 

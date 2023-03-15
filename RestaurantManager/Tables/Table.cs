@@ -23,14 +23,14 @@ class Table
     
     public static List<Table> GetAllTables()
     {
-        return Program.Database.Execute("SELECT * FROM tables")
+        return DatabaseConnection.Execute("SELECT * FROM tables")
             .Select(Parse)
             .ToList();
     }
     
     public static Table? GetTableByID(int id)
     {
-        List<List<object>> res = Program.Database.Execute(
+        List<List<object>> res = DatabaseConnection.Execute(
             "SELECT * FROM tables WHERE id = %s",
             id);
 

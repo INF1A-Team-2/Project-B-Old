@@ -42,16 +42,31 @@ class Reservation
 
     public static List<Reservation> GetAllReservations()
     {
-        return Program.Database.Execute("SELECT * FROM reservations")
+        return DatabaseConnection.Execute("SELECT * FROM reservations")
             .Select(Parse)
             .ToList();
     }
 
     public static Reservation? GetReservationByID(int id)
     {
-        List<List<object>> res = Program.Database.Execute(
+        List<List<object>> res = DatabaseConnection.Execute(
             "SELECT * FROM reservations WHERE id = %s",
             id);
+
+        if (res.Count == 0)
+            return null;
+
+        return Parse(res[0]);
+    }
+
+    public static Reservation GetReservationByCode(string code)
+    {
+        List<List<object>> res = DatabaseConnection.Execute(
+            """
+            SELECT * FROM reservations WHERE code = %s
+            WHERE CAST(datetime as DATE) = CAST(CURDATE() as DATE)
+            """,
+            code);
 
         if (res.Count == 0)
             return null;
