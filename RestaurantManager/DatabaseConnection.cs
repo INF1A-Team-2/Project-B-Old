@@ -1,5 +1,4 @@
 using System.Net;
-using System.Security.Authentication;
 using Newtonsoft.Json;
 
 namespace RestaurantManager;
@@ -10,24 +9,20 @@ class DatabaseCredentials
     public string Token;
 }
 
-class DatabaseConnection
+static class DatabaseConnection
 {
-    private readonly DatabaseCredentials _credentials;
-    private readonly HttpClient _httpClient = new HttpClient();
+    private const string _credentialsFileName = "DatabaseCredentials.json";
+    private static readonly DatabaseCredentials _credentials = GetCredentialsFromJson(_credentialsFileName);
+    private static readonly HttpClient _httpClient = new HttpClient();
 
-    public DatabaseConnection(string credentialsFileName)
-    {
-        this._credentials = GetCredentialsFromJson(credentialsFileName);
-        
-        _httpClient.DefaultRequestHeaders.Add("Token", _credentials.Token);
-    }
-
-    public List<List<object>> Execute(string query, params object[] values)
+    public static List<List<object>> Execute(string query, params object[] values)
     {
         StringContent body = new StringContent(
             JsonConvert.SerializeObject(new { Query = query, Values = values }),
             System.Text.Encoding.UTF8,
             "application/json");
+        
+        _httpClient.DefaultRequestHeaders.Add("Token", _credentials.Token);
         
         HttpResponseMessage res = _httpClient.PostAsync(_credentials.Adress, body).Result;
         string responseBody = res.Content.ReadAsStringAsync().Result;
@@ -47,7 +42,7 @@ class DatabaseConnection
         return JsonConvert.DeserializeObject<List<List<object>>>(responseBody);
     }
 
-    private DatabaseCredentials GetCredentialsFromJson(string fileName)
+    private static DatabaseCredentials GetCredentialsFromJson(string fileName)
     {
         using (StreamReader stream = new StreamReader(fileName))
         {
