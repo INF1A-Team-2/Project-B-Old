@@ -62,10 +62,7 @@ class Reservation
     public static Reservation GetReservationByCode(string code)
     {
         List<List<object>> res = DatabaseConnection.Execute(
-            """
-            SELECT * FROM reservations WHERE code = %s
-            WHERE CAST(datetime as DATE) = CAST(CURDATE() as DATE)
-            """,
+            "SELECT * FROM reservations WHERE code = %s WHERE CAST(datetime as DATE) = CAST(CURDATE() as DATE)",
             code);
 
         if (res.Count == 0)
